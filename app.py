@@ -3,6 +3,10 @@ import PyPDF2
 
 app = Flask(__name__)
 
+# Read companies from file
+with open("companies.txt", "r") as f:
+    companies = [line.strip() for line in f.readlines()]
+
 company_rules = {
     "TCS": ["python", "sql", "communication"],
     "Infosys": ["java", "dsa", "projects"],
@@ -13,9 +17,9 @@ def extract_text_from_pdf(pdf_file):
     reader = PyPDF2.PdfReader(pdf_file)
     text = ""
     for page in reader.pages:
-        text += page.extract_text()
+        if page.extract_text():
+            text += page.extract_text()
     return text.lower()
-
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -46,7 +50,7 @@ def index():
             else:
                 report += f"{c} missing<br>"
 
-        for skill in company_rules[company]:
+        for skill in company_rules.get(company, []):
             total += 1
             if skill in text:
                 score += 1
@@ -55,10 +59,7 @@ def index():
 
         percent = int((score / total) * 100)
 
-        if percent >= 70:
-            status = "Approved"
-        else:
-            status = "Rejected"
+        status = "Approved" if percent >= 70 else "Rejected"
 
         result = f"""
         <h3>{status} for {company}</h3>
@@ -66,8 +67,7 @@ def index():
         <p>{report}</p>
         """
 
-    return render_template("index.html", result=result, companies=company_rules.keys())
-
+    return render_template("index.html", result=result, companies=companies)
 
 if __name__ == "__main__":
     app.run(debug=True)

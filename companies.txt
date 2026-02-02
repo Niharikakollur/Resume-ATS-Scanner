@@ -1,0 +1,8 @@
+Google
+Microsoft
+Amazon
+Apple
+TCS
+Infosys
+Wipro
+
