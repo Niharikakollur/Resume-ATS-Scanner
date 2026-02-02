@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume ATS Scanner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #eef2ff, #f3f4f6);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+        }
+        h2 {
+            color: #111827;
+            margin-bottom: 20px;
+        }
+        input[type="file"], select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+        button {
+            padding: 12px 20px;
+            background-color: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #1e40af;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: left;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .approved {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .rejected {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px;
+            }
+            button, input[type="file"], select {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Resume ATS Scanner</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="resume" required><br>
+            <select name="company">
+                {% for c in companies %}
+                <option value="{{c}}">{{c}}</option>
+                {% endfor %}
+            </select><br>
+            <button type="submit">Scan Resume</button>
+        </form>
+
+        {% if result %}
+        <div class="result {% if 'Approved' in result %}approved{% else %}rejected{% endif %}">
+            {{ result|safe }}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
