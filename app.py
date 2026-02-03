@@ -3,15 +3,17 @@ import PyPDF2
 
 app = Flask(__name__)
 
-# Read companies from file
-with open("companies.txt", "r") as f:
-    companies = [line.strip() for line in f.readlines()]
-
+# Company rules (ONLY source of companies)
 company_rules = {
     "TCS": ["python", "sql", "communication"],
     "Infosys": ["java", "dsa", "projects"],
-    "Google": ["projects", "github", "dsa", "internship"]
+    "Google": ["projects", "github", "dsa", "internship"],
+    "Wipro": ["python", "projects", "skills"],
+    "Amazon": ["aws", "python", "dsa", "projects"],
+    "Microsoft": ["c#", "azure", "projects", "internship"],
+    "Accenture": ["communication", "sql", "python", "teamwork"]
 }
+
 
 def extract_text_from_pdf(pdf_file):
     reader = PyPDF2.PdfReader(pdf_file)
@@ -21,12 +23,16 @@ def extract_text_from_pdf(pdf_file):
             text += page.extract_text()
     return text.lower()
 
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     result = ""
+
     if request.method == "POST":
         pdf = request.files["resume"]
         company = request.form["company"]
+
+        print("Selected company:", company)  # Debug line
 
         text = extract_text_from_pdf(pdf)
 
@@ -34,32 +40,34 @@ def index():
         total = 0
         report = ""
 
+        # Basic ATS checks
         checks = {
             "Email": "@" in text,
-            "Phone": any(c.isdigit() for c in text),
-            "Skills": "skills" in text,
-            "Projects": "projects" in text,
+            "Phone Number": any(c.isdigit() for c in text),
+            "Skills Section": "skills" in text,
+            "Projects Section": "projects" in text,
             "LinkedIn": "linkedin" in text,
             "GitHub": "github" in text,
         }
 
-        for c, ok in checks.items():
+        for item, ok in checks.items():
             total += 1
             if ok:
                 score += 1
             else:
-                report += f"{c} missing<br>"
+                report += f"{item} missing<br>"
 
-        for skill in company_rules.get(company, []):
+        # Company specific skill checks
+        for skill in company_rules[company]:
             total += 1
             if skill in text:
                 score += 1
             else:
-                report += f"{skill} missing<br>"
+                report += f"{skill} missing for {company}<br>"
 
         percent = int((score / total) * 100)
 
-        status = "Approved" if percent >= 70 else "Rejected"
+        status = "Approved ✅" if percent >= 70 else "Rejected ❌"
 
         result = f"""
         <h3>{status} for {company}</h3>
@@ -67,7 +75,10 @@ def index():
         <p>{report}</p>
         """
 
-    return render_template("index.html", result=result, companies=companies)
+    return render_template("index.html",
+                           result=result,
+                           companies=company_rules.keys())
+
 
 if __name__ == "__main__":
     app.run(debug=True)

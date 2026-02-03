@@ -2,28 +2,79 @@
 <html>
 <head>
     <title>Resume ATS Scanner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background:  white ;
+            padding: 40px;
+            width: 450px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+        }
+
+        input[type="file"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #1f5fe0;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #174dcc;
+        }
+
+        .result {
+            margin-top: 25px;
+            text-align: left;
+            font-size: 15px;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Resume ATS Scanner</h1>
+    <div class="card">
+        <h1>Resume ATS Scanner</h1>
 
-    <form method="POST" enctype="multipart/form-data">
-        <label>Select Company:</label>
-        <select name="company">
-            {% for c in companies %}
-                <option value="{{ c }}">{{ c }}</option>
-            {% endfor %}
-        </select>
-        <br><br>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="resume" required>
 
-        <input type="file" name="resume" required>
-        <br><br>
+            <select name="company">
+                {% for c in companies %}
+                    <option value="{{ c }}">{{ c }}</option>
+                {% endfor %}
+            </select>
 
-        <input type="submit" value="Scan Resume">
-    </form>
+            <button type="submit">Scan Resume</button>
+        </form>
 
-    <div>
-        {{ result|safe }}
+        <div class="result">
+            {{ result|safe }}
+        </div>
     </div>
 </body>
 </html>
-
