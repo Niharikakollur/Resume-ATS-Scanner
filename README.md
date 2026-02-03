@@ -21,10 +21,11 @@ This app analyzes resumes based on company-specific requirements and gives an **
 - HTML, CSS
 
 ## 📸 Screenshots
-(Add screenshots here later)
+![Resume ATS Scanner Screenshot](https://github.com/user-attachments/assets/4dee2044-9286-4b46-bdd4-cfad85480b31)
+
 
 ## ▶️ Run Locally
 ```bash
 pip install -r requirements.txt
 python app.py
-[Resume ATS Scanner Screenshot](https://github.com/user-attachments/assets/abda1657-181f-4625-b841-d06391e6a75c)
+
